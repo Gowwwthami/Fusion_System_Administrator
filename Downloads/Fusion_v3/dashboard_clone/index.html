@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fusion System Administrator Dashboard</title>
+    <link rel="stylesheet" href="style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+      integrity="sha512-SnH5WK+bZxgPHs44uWix+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkR4j8wYgIC5XgF5A2z5fV5hYe4Q4f0b5Q=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+  </head>
+  <body>
+    <div class="app-shell">
+      <main class="main-area">
+        <section class="hero-bar">
+          <button class="hero-title">Fusion System Administrator</button>
+          <div class="hero-tools">
+            <div class="search-pill">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <input type="text" placeholder="Search users, roles, actions" />
+            </div>
+            <button class="tool-btn"><i class="fa-regular fa-bell"></i><span class="dot"></span></button>
+            <button class="tool-btn"><i class="fa-regular fa-envelope"></i></button>
+            <button class="profile-chip">
+              <span class="avatar">SA</span>
+              <span>Super Admin</span>
+            </button>
+          </div>
+        </section>
+
+        <section class="stats-grid">
+          <article class="stat-card">
+            <div class="stat-head">
+              <p>Total Users</p>
+              <i class="fa-solid fa-users"></i>
+            </div>
+            <h3>5,173</h3>
+            <span class="muted">In last year</span>
+          </article>
+          <article class="stat-card">
+            <div class="stat-head">
+              <p>Total Roles</p>
+              <i class="fa-solid fa-shield-halved"></i>
+            </div>
+            <h3>573</h3>
+            <span class="muted">In last year</span>
+          </article>
+          <article class="stat-card">
+            <div class="stat-head">
+              <p>Created Roles</p>
+              <i class="fa-solid fa-screwdriver-wrench"></i>
+            </div>
+            <h3>2,543</h3>
+            <span class="muted">In last year</span>
+          </article>
+          <article class="stat-card">
+            <div class="stat-head">
+              <p>Archived Users</p>
+              <i class="fa-solid fa-box-archive"></i>
+            </div>
+            <h3>245</h3>
+            <span class="muted">In last year</span>
+          </article>
+        </section>
+
+        <section class="quick-actions">
+          <article class="action-card">
+            <i class="fa-solid fa-user-plus"></i>
+            <h4>Manage Users</h4>
+            <p>Create user, reset credentials, and maintain user directory records.</p>
+            <button>Open</button>
+          </article>
+          <article class="action-card">
+            <i class="fa-solid fa-diagram-project"></i>
+            <h4>Role Management</h4>
+            <p>Create role, edit assignments, and update module access safely.</p>
+            <button>Open</button>
+          </article>
+          <article class="action-card">
+            <i class="fa-solid fa-database"></i>
+            <h4>Backup Management</h4>
+            <p>Track backups, schedules, retention windows, and restore readiness.</p>
+            <button>Open</button>
+          </article>
+        </section>
+
+        <section class="dashboard-grid">
+          <article class="panel panel-table">
+            <header class="panel-head">
+              <h5>Recent User Operations</h5>
+              <button class="link-btn">View all</button>
+            </header>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>User</th>
+                    <th>Role</th>
+                    <th>Action</th>
+                    <th>Time</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>arjun.singh</td>
+                    <td>Faculty</td>
+                    <td>Password Reset</td>
+                    <td>2 mins ago</td>
+                    <td><span class="badge ok">Completed</span></td>
+                  </tr>
+                  <tr>
+                    <td>nidhi.verma</td>
+                    <td>Student</td>
+                    <td>User Created</td>
+                    <td>10 mins ago</td>
+                    <td><span class="badge ok">Completed</span></td>
+                  </tr>
+                  <tr>
+                    <td>priya.iyer</td>
+                    <td>Staff</td>
+                    <td>Role Updated</td>
+                    <td>22 mins ago</td>
+                    <td><span class="badge warn">Pending Sync</span></td>
+                  </tr>
+                  <tr>
+                    <td>rahul.mehra</td>
+                    <td>Faculty</td>
+                    <td>Account Archived</td>
+                    <td>40 mins ago</td>
+                    <td><span class="badge ok">Completed</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </article>
+
+          <article class="panel panel-feed">
+            <header class="panel-head">
+              <h5>Notifications</h5>
+              <button class="link-btn">Mark all</button>
+            </header>
+            <ul class="feed-list">
+              <li>
+                <i class="fa-solid fa-circle-check"></i>
+                <div>
+                  <strong>Role access updated</strong>
+                  <p>Mess Admin privileges were updated successfully.</p>
+                </div>
+              </li>
+              <li>
+                <i class="fa-solid fa-user-check"></i>
+                <div>
+                  <strong>New user onboarded</strong>
+                  <p>Faculty account for Dr. Ritu Verma was created.</p>
+                </div>
+              </li>
+              <li>
+                <i class="fa-solid fa-clock"></i>
+                <div>
+                  <strong>Backup schedule due</strong>
+                  <p>Database backup will start at 02:00 UTC.</p>
+                </div>
+              </li>
+              <li>
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                <div>
+                  <strong>Action required</strong>
+                  <p>Two archived users need data retention review.</p>
+                </div>
+              </li>
+            </ul>
+          </article>
+        </section>
+      </main>
+
+      <aside class="right-sidebar">
+        <button class="side-item primary" title="User Directory"><i class="fa-solid fa-book"></i></button>
+
+        <div class="side-item group" title="User Management">
+          <i class="fa-solid fa-user"></i>
+          <div class="submenu">
+            <button title="Add Student"><i class="fa-solid fa-user-graduate"></i></button>
+            <button title="Add Faculty"><i class="fa-solid fa-chalkboard-user"></i></button>
+            <button title="Add Staff"><i class="fa-solid fa-users-gear"></i></button>
+            <button title="Reset Password"><i class="fa-solid fa-key"></i></button>
+          </div>
+        </div>
+
+        <div class="side-item group" title="Role Management">
+          <i class="fa-solid fa-clone"></i>
+          <div class="submenu">
+            <button title="Create Role"><i class="fa-solid fa-user-shield"></i></button>
+            <button title="Manage Access"><i class="fa-solid fa-list-check"></i></button>
+            <button title="Edit Role"><i class="fa-solid fa-pen-to-square"></i></button>
+          </div>
+        </div>
+
+        <div class="side-item group" title="Archive Management">
+          <i class="fa-solid fa-box-archive"></i>
+          <div class="submenu">
+            <button title="Archive Students"><i class="fa-solid fa-user-graduate"></i></button>
+            <button title="Archive Faculty"><i class="fa-solid fa-chalkboard-user"></i></button>
+          </div>
+        </div>
+
+        <div class="side-item group" title="Backup Management">
+          <i class="fa-solid fa-hard-drive"></i>
+          <div class="submenu">
+            <button title="Backups"><i class="fa-solid fa-database"></i></button>
+            <button title="Schedules"><i class="fa-solid fa-clock"></i></button>
+          </div>
+        </div>
+
+        <button class="side-item logout" title="Logout"><i class="fa-solid fa-right-from-bracket"></i></button>
+      </aside>
+    </div>
+  </body>
+</html>

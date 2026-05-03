@@ -1,0 +1,465 @@
+
+================================================================================
+EXTRACTING: USE CASES
+================================================================================
+
+--- PARAGRAPHS ---
+Super Admin Use Cases
+SA-UC-001 - Manage User Account
+SA-UC-003 - Manage Roles & Permissions
+SA-UC-005 - View System Audit Log
+SA-UC-006 - Bulk Upload Users
+SA-UC-007 - Manage Department Hierarchy
+SA-UC-012 - Create Basic User
+SA-UC-013 - Assign/Reassign Roles
+SA-UC-014 - Archive User/Data
+SA-UC-015 - Switch Role
+SA-UC-016 - Access Modules as per Role
+SA-UC-019 - Bulk User Operations
+SA-UC-020 - Manage System Roles
+SA-UC-022 - Emergency User Access
+
+--- TABLES ---
+
+Table 1:
+UC ID | SA-UC-001
+UC Name | Manage User Account
+UC Description | The Super Admin can create, read, update, and deactivate user accounts ensuring users have appropriate access from onboarding.
+Trigger | Super Admin selects 'User Management' from the admin dashboard.
+Actors | Primary: Super Admin | Secondary: System (Email Service)
+Preconditions | - Super Admin is authenticated and authorized.
+- The Super Admin role is active in the system.
+Main Flow | M1: Navigate to User Management → M2: List users → M3: Create New User → M4: Fill registration form → M5: Enter details and submit → M6: System validates, creates account, triggers email → M7: Confirms success.
+Success Postconditions | - User entity persisted with status 'Active'
+- Audit log entry (SA-AUDIT-001)
+- Email invitation sent
+Failure Postconditions | - No user created
+- Validation errors displayed
+Alternate/Exception Flows | A1: No users found → return
+A2: Cancel creation → return
+A3: Validation error → highlight errors
+Sub-Flows | S1: Send Account Invitation → Generate temp password, send email
+Notes | Email templates configurable (SA-UC-004).
+
+Table 2:
+UC ID | SA-UC-003
+UC Name | Manage Roles & Permissions
+UC Description | The Super Admin can define new roles, modify existing ones, and assign permissions.
+Trigger | Super Admin selects 'Role Management' from the admin dashboard.
+Actors | Primary: Super Admin
+Preconditions | - Super Admin is authenticated and authorized.
+Main Flow | M1: Navigate to Role Management → M2: Display roles → M3: Edit permissions → M4: Save → M5: System validates, updates role, logs → M6: Confirms success.
+Success Postconditions | - Role updated
+- Audit log (SA-AUDIT-003)
+- Users inherit new permissions
+Failure Postconditions | - No change made
+Alternate/Exception Flows | A1: No roles → empty state
+A2: Validation error → highlight errors
+Sub-Flows | S3: Write to Audit Log → log role modification
+Notes | Permission changes effective immediately.
+
+Table 3:
+UC ID | SA-UC-005
+UC Name | View System Audit Log
+UC Description | The Super Admin can view a read-only history of all system events and actions.
+Trigger | Super Admin selects 'Audit Log'.
+Actors | Primary: Super Admin
+Preconditions | - Super Admin is authenticated and authorized.
+Main Flow | M1: Navigate to Audit Log → M2: Retrieve logs → M3: Apply filters → M4: Update view → M5: View entry details.
+Success Postconditions | - Logs displayed
+Failure Postconditions | - Error message, log not viewable
+Alternate/Exception Flows | A1: No entries → empty state
+Sub-Flows | None
+Notes | Audit log immutable (BR-SA-007). Exportable to CSV.
+
+Table 4:
+UC ID | SA-UC-006
+UC Name | Bulk Upload Users
+UC Description | The Super Admin can create/update multiple users by uploading a CSV.
+Trigger | Super Admin selects 'Bulk Upload'.
+Actors | Primary: Super Admin | Secondary: System (Validation Engine)
+Preconditions | - Super Admin is authenticated and authorized.
+- CSV file ready.
+Main Flow | M1: Navigate to Bulk Upload → M2: Upload CSV → M3: Validate format → M4: Validate rows → M5: Show summary → M6: Confirm upload → M7: Process rows → M8: Summary report → M9: Audit log, notify.
+Success Postconditions | - Users created/updated
+- Audit log (SA-AUDIT-006)
+- Emails sent
+- Summary available
+Failure Postconditions | - No accounts updated
+- Errors displayed
+Alternate/Exception Flows | A1: No file → prompt
+A2: Invalid file → reject
+A3: Format error → show errors
+A4: Row errors → show preview
+A5: Cancel → return
+Sub-Flows | S-VALIDATE: Validate user record against rules
+Notes | CSV must include: action, emp_id, email, first_name, last_name, role, department.
+
+Table 5:
+UC ID | SA-UC-007
+UC Name | Manage Department Hierarchy
+UC Description | The Super Admin can define departments and assign users to them.
+Trigger | Super Admin selects 'Department Hierarchy'.
+Actors | Primary: Super Admin
+Preconditions | - Super Admin is authenticated and authorized.
+- Some users exist.
+Main Flow | M1: Navigate to Hierarchy → M2: Display org tree → M3: Assign HoD → M4: Save → M5: Validate, update, log → M6: Confirm success.
+Success Postconditions | - Hierarchy updated
+- Audit log (SA-AUDIT-007)
+- Reporting lines effective
+Failure Postconditions | - No change
+Alternate/Exception Flows | A1: Validation error → highlight errors
+Sub-Flows | S3: Write to Audit Log → log hierarchy change
+Notes | Changes affect workflow routing.
+
+Table 6:
+UC ID | SA-UC-012
+UC Name | Create Basic User
+UC Description | Super Admin creates a new basic user (student, faculty, or staff).
+Trigger | Super Admin selects 'Create User'.
+Actors | Primary: Super Admin | Secondary: User Database
+Preconditions | Super Admin logged in. Required user details available.
+Main Flow | M1: SA navigates to 'Create User' → M2: SA enters personal & institutional details → M3: System validates inputs → M4: System generates credentials → M5: User added to database → M6: Notification sent → End (success)
+Success Postconditions | New user created with default role = Basic User. Credentials stored securely.
+Failure Postconditions | User not created; draft discarded.
+Alternate/Exception Flows | A1: Duplicate entry → error → return to M2
+A2: Missing mandatory fields → error
+Sub-Flows | S1: Validate email/mobile format
+S2: Generate default credentials
+Applicable BRs | BR-SA-003, BR-SA-004
+Notes | Message ID: USER-CREATE-SUCCESS
+
+Table 7:
+UC ID | SA-UC-013
+UC Name | Assign/Reassign Roles
+UC Description | Super Admin assigns or changes roles for an existing user.
+Trigger | Super Admin selects 'Assign Role'.
+Actors | Primary: Super Admin | Secondary: Role Management System
+Preconditions | Super Admin logged in. Target user exists.
+Main Flow | M1: SA selects a user from the list → M2: SA chooses new role(s) → M3: System validates authorization → M4: System updates role mapping → M5: Notification sent → End (success)
+Success Postconditions | User role updated in system. Audit trail maintained.
+Failure Postconditions | No change made.
+Alternate/Exception Flows | A1: Unauthorized role assignment → error
+A2: Role conflict → notify SA
+Sub-Flows | S1: Validate role compatibility
+Applicable BRs | BR-SA-005, BR-SA-006
+Notes | Message ID: ROLE-ASSIGN-OK
+
+Table 8:
+UC ID | SA-UC-014
+UC Name | Archive User/Data
+UC Description | Super Admin archives users or historical data for compliance and storage optimization.
+Trigger | Super Admin selects 'Archive'.
+Actors | Primary: Super Admin | Secondary: Archive Service
+Preconditions | Super Admin logged in. Target user/data available.
+Main Flow | M1: SA selects user/data to archive → M2: System validates archive policy → M3: System moves records to archive DB → M4: System confirms archive completion → End (success)
+Success Postconditions | User/data archived. Archive log updated.
+Failure Postconditions | Data not archived.
+Alternate/Exception Flows | A1: Invalid archive target → error
+A2: Storage unavailable → fail
+Sub-Flows | S1: Backup before archiving
+Applicable BRs | BR-SA-007, BR-SA-008
+Notes | Message ID: ARCHIVE-SUCCESS
+
+Table 9:
+UC ID | SA-UC-015
+UC Name | Switch Role
+UC Description | Allows a user with multiple roles to switch active role in the dashboard.
+Trigger | User selects 'Switch Role'.
+Actors | Primary: User | Secondary: Role Management System
+Preconditions | User logged in. User has multiple roles.
+Main Flow | M1: User opens role switcher → M2: User selects another role → M3: System validates role → M4: Dashboard refreshed with selected role → End (success)
+Success Postconditions | Role switched successfully. Session updated.
+Failure Postconditions | Role not switched.
+Alternate/Exception Flows | A1: Invalid role selection → error
+Sub-Flows | S1: Fetch role-specific modules
+Applicable BRs | BR-SA-009
+Notes | Message ID: ROLE-SWITCH-OK
+
+Table 10:
+UC ID | SA-UC-016
+UC Name | Access Modules as per Role
+UC Description | System ensures users can only access modules relevant to their active role.
+Trigger | User clicks on module link.
+Actors | Primary: User | Secondary: Module Access Service
+Preconditions | User logged in. Active role assigned.
+Main Flow | M1: User selects module → M2: System checks role permissions → M3: If allowed, module opens → M4: Else, access denied → End
+Success Postconditions | Module access granted. Usage logged.
+Failure Postconditions | Access denied.
+Alternate/Exception Flows | A1: Unauthorized module access → deny
+Sub-Flows | S1: Check RBAC table
+Applicable BRs | BR-SA-010
+Notes | Message ID: MODULE-ACCESS-DENY
+
+Table 11:
+UC ID | SA-UC-019
+UC Name | Bulk User Operations
+UC Description | Super Admin performs operations on multiple users simultaneously (bulk role assignment, bulk archival, etc.).
+Trigger | Super Admin selects multiple users and chooses bulk operation.
+Actors | Primary: Super Admin | Secondary: Batch Processing System, Approval Workflow
+Preconditions | - Multiple users selected
+- Bulk operation is valid for selected users
+Main Flow | M1: Super Admin selects multiple users → M2: System validates bulk operation eligibility → M3: Super Admin chooses bulk operation type → M4: System displays operation preview and impact → M5: Super Admin confirms bulk operation → M6: System processes operations in batches → M7: System provides progress updates → M8: System completes operation and shows results
+Sub-Flows | S1: Operation Preview
+S2: Results Summary
+Applicable BRs | BR-SA-001, BR-SA-002, BR-SA-003, BR-SA-007, BR-SA-008, BR-SA-010
+
+Table 12:
+UC ID | SA-UC-020
+UC Name | Manage System Roles
+UC Description | Super Admin creates, modifies, or deactivates system roles and their associated permissions.
+Trigger | Super Admin accesses role management interface or receives role modification request.
+Actors | Primary: Super Admin | Secondary: Permission Management System, IT Admin
+Preconditions | - Super Admin authenticated with role management privileges
+- System roles are configurable
+Main Flow | M1: Super Admin accesses role management interface → M2: System displays existing roles and permissions → M3: Super Admin selects role operation (Create/Modify/Deactivate) → M4: System provides role configuration form → M5: Super Admin configures role details and permissions → M6: System validates role configuration → M7: System saves role changes → M8: System updates permission mappings → M9: System notifies affected users
+Sub-Flows | S1: Role Configuration
+S2: Permission Mapping
+Applicable BRs | BR-SA-001, BR-SA-003, BR-SA-007, BR-SA-008, BR-SA-010
+
+Table 13:
+UC ID | SA-UC-022
+UC Name | Emergency User Access
+UC Description | Super Admin provides emergency access to users during system failures or critical situations with proper authorization.
+Trigger | Emergency situation declared or urgent access request received.
+Actors | Primary: Super Admin | Secondary: Emergency Approver (Director/CTO), IT Support
+Preconditions | - Emergency situation exists
+- Emergency procedures activated
+- Proper authorization available
+Main Flow | M1: Super Admin receives emergency access request → M2: Super Admin verifies emergency situation → M3: System requests emergency authorization → M4: Emergency approver provides authorization → M5: System grants temporary emergency access → M6: System enables enhanced logging for emergency session → M7: System monitors emergency access usage → M8: System automatically revokes access after time limit
+Success Postconditions | Emergency access granted temporarily. Enhanced audit logging active. Automatic revocation scheduled. Emergency session monitored.
+Sub-Flows | S1: Emergency Monitoring
+S2: Automatic Revocation
+Applicable BRs | BR-SA-001, BR-SA-008, BR-SA-009
+Notes | Includes Global Alternate Flow: GA1: System Emergency Override
+
+================================================================================
+EXTRACTING: WORKFLOWS
+================================================================================
+
+--- PARAGRAPHS ---
+SA -  Workflow Specifications
+SA-WF-001 — User Creation Workflow
+Activity Graph –
+Nodes (Use Cases, Decisions, Ends):  		\\(With some example entries included)
+Directed Edges (with BR Guards):  		\\(With some example entries included)
+SA-WF-002 — Role Assignment Workflow
+Activity Graph –
+Nodes (Use Cases, Decisions, Ends):  		\\(With some example entries included)
+Directed Edges (with BR Guards):  		\\(With some example entries included)
+SA-WF-103 — Role Reassignment & Task Transfer
+Activity Graph –
+Nodes (Use Cases, Decisions, Ends):  		\\(With some example entries included)
+Directed Edges (with BR Guards):  		\\(With some example entries included)
+
+--- TABLES ---
+
+Table 1:
+Workflow Code | SA-WF-101
+Workflow Name | Create Basic User + Credential Generation
+Objective | Create a Student, Faculty, or Staff account, validate institute email/ID uniqueness, and trigger automated credential delivery.
+Trigger | Super Admin clicks “Create User” or uploads Bulk CSV.
+Actors / Lanes | Super Admin | System
+Preconditions | Authenticated Super Admin (2FA session active); Valid Institute ID and Department data available.
+Start Task (UC) | SA-UC-001: Enter User Details / Upload CSV
+End States | END-01 (Account Active & Credentials Sent), END-02 (Validation Failure)
+
+Table 2:
+Node ID | Type | Label | Actor/Lane | Notes
+N1 | UC | SA-UC-001: Enter/Upload User Data | Super Admin | Includes Personal Details & Institute ID
+D1 | Decision | Validation Check [BR-4.1] | System | Unique ID, Institute Email, Mandatory Fields
+N2 | UC | SA-UC-002: Generate UID & Credentials | System | Automatic Generation of User ID
+N3 | UC | SA-UC-003: Send Welcome Email | System | Credentials & First-time Login Link sent
+END1 | End | END-01: User Created | System | Dashboard Access enabled
+END2 | End | END-02: Failure | System | Error log generated for Super Admin
+
+Table 3:
+Edge ID | From | To | Guard / Condition (BRs) | On Timeout | Notes
+E1 | N1 | D1 | [Data Submitted] | — | System begins validation
+E2 | D1 | N2 | [Valid ID & Email] BR-4.1 | — | Proceeds to generation
+E3 | D1 | END2 | [Duplicate ID / Invalid Email] | — | Rejection / Error Report
+E4 | N2 | N3 | [UID Generated] | — | System triggers SMTP
+E5 | N3 | END1 | [Email Sent Successfully] | — | Success
+
+Table 4:
+Workflow Code | SA-WF-102
+Workflow Name | Assign Role + Compatibility Check
+Objective | Assign a specific administrative or academic role to an active user while ensuring compatibility (e.g., Student vs Faculty roles).
+Trigger | Super Admin clicks “Assign Role” on User Profile.
+Actors / Lanes | Super Admin | System
+Preconditions | User must be "Active"; Role must be available in Role Metadata (3.5.1).
+Start Task (UC) | SA-UC-004: Select Role & Target User
+End States | END-03 (Role Active), END-04 (Conflict/Eligibility Failure)
+
+Table 5:
+Node ID | Type | Label | Actor/Lane | Notes
+N1 | UC | SA-UC-004: Configure Role Parameters | Super Admin | Set Start/End Date & Scope
+D1 | Decision | Compatibility Check [BR-4.2] | System | User Type vs Role Type (e.g., Student-Dean check)
+D2 | Decision | Singularity/Conflict Check | System | Check if singular role (e.g., Dean) is occupied
+N2 | UC | SA-UC-005: Activate Role & Notify | System | Update Dashboard & Send Notification
+END3 | End | END-03: Success | System | Logged in Audit Trail
+END4 | End | END-04: Assignment Rejected | System | Notify Super Admin of Conflict
+
+Table 6:
+Edge ID | From | To | Guard / Condition (BRs) | On Timeout | Notes
+E1 | N1 | D1 | [Assignment Submitted] | — | —
+E2 | D1 | D2 | [User Eligible] | — | Eligibility confirmed
+E3 | D1 | END4 | [Student-Faculty Role Conflict] | — | BR-4.2 Violation
+E4 | D2 | N2 | [Role Vacant / Multi-user Allowed] | — | —
+E5 | D2 | END4 | [Singular Role Occupied] | — | Suggest Reassignment instead
+E6 | N2 | END3 | [Notification Sent] | — | Role appears in user dashboard
+
+Table 7:
+Workflow Code | SA-WF-103
+Workflow Name | Role Reassignment + Task Handover
+Objective | Transfer a singular role from one user to another and automatically move pending module tasks.
+Trigger | Super Admin clicks “Reassign Role”.
+Actors / Lanes | Super Admin | System
+Preconditions | Existing role holder must have active assignments.
+Start Task (UC) | SA-UC-006: Select Existing Role Assignment
+End States | END-05 (Tasks Transferred & Role Reassigned), END-06 (Failure)
+
+Table 8:
+Node ID | Type | Label | Actor/Lane | Notes
+N1 | UC | SA-UC-006: Identify New Holder | Super Admin | Specify Effective Date
+N2 | UC | SA-UC-007: Transfer Pending Tasks | System | Moves requests/approvals to new user
+N3 | UC | SA-UC-008: Revoke Old Access | System | Sets old holder to Read-Only (30 days)
+END5 | End | END-05: Reassignment Complete | System | Notifications sent to both users
+
+Table 9:
+Edge ID | From | To | Guard / Condition (BRs) | On Timeout | Notes
+E1 | N1 | N2 | [Reassignment Confirmed] | — | System begins task migration
+E2 | N2 | N3 | [Tasks Transferred] | — | Ensure no orphan requests
+E3 | N3 | END5 | [Audit Log Updated] | — | BR-3.2.2 compliant
+
+================================================================================
+EXTRACTING: BUSINESS RULES
+================================================================================
+
+--- PARAGRAPHS ---
+Super Admin – Business Rules
+
+--- TABLES ---
+
+Table 1:
+ID | BR-SA-001
+Name | Eligibility Verification for Users and Roles
+Type | Constraint | Authorization
+Canonical Statement | Only authorized institute employees (Faculty/Staff) can be assigned the Super Admin role, with proper authentication credentials.
+Inputs & Terms | - Employee ID: From HR database
+- Role Assignment Request: From higher authority
+- Authentication Credentials: Multi-factor authentication required
+Logic (pick one) | IF employee is Faculty/Staff AND has proper authorization from Director/Dean THEN assign Super Admin role with full system privileges ELSE reject assignment and log attempt
+Effects/Outcome | Ensures only authorized personnel can access Super Admin functions.
+Referenced By | UC: SA-UC-001, SA-UC-002, SA-UC-003
+TBD / Policy Hook | Director/Dean approval required for Super Admin role assignment.
+
+Table 2:
+ID | BR-SA-002
+Name | Mandatory User Fields
+Type | Constraint
+Canonical Statement | The System MUST NOT create or update a user account if First Name, Last Name, Employee ID, Email, or Role fields are null, empty, or undefined.
+Inputs & Terms | - firstName: String
+- lastName: String
+- empId: String
+- email: String
+- role: String
+Logic (pick one) | IF any mandatory field IS NULL/EMPTY THEN ABORT and return error ELSE ALLOW.
+Effects/Outcome | Ensures all accounts have required information.
+Referenced By | UC: SA-UC-001 (M5), SA-UC-006
+WF: SA-WF-002
+TBD / Policy Hook | None.
+
+Table 3:
+ID | BR-SA-002
+Name | User Must Have at Least One Role
+Type | Constraint
+Canonical Statement | Every user MUST have at least one active role assigned.
+Inputs & Terms | - UserID: [Database]
+- RoleList: [User Profile]
+Logic (pick one) | IF RoleList is empty THEN system prevents account activation
+Effects/Outcome | Ensures no orphan users exist in the system
+Referenced By | UC: SA-UC-001, SA-UC-002
+WF: SA-WF-101
+TBD / Policy Hook | None
+
+Table 4:
+ID | BR-SA-003
+Name | Role Assignment Constraints
+Type | Constraint | Authorization
+Canonical Statement | Users can only be assigned roles that match their designation, qualification, and current responsibilities.
+Inputs & Terms | - User Designation: From employee profile
+- Requested Role: Administrative/Academic role
+- Department: User's department affiliation
+- Qualification: Educational/professional credentials
+Logic (pick one) | IF user designation matches role requirements AND department allows role assignment THEN assign role with appropriate permissions ELSE reject and specify missing requirements
+Effects/Outcome | Maintains role-based access control integrity.
+Referenced By | UC: SA-UC-002, SA-UC-003, SA-UC-008
+TBD / Policy Hook | Department heads define role-designation mapping.
+
+Table 5:
+ID | BR-SA-005
+Name | Data Archival Triggers
+Type | Trigger | Constraint
+Canonical Statement | User data must be archived when employment/enrollment ends or after 3 years of inactivity.
+Inputs & Terms | - Last Login Date: System tracking
+- Employment/Enrollment Status: HR/Academic records
+- Data Retention Period: 3 years from last activity
+- Archive Request: Manual or automatic trigger
+Logic (pick one) | IF employment status = Terminated OR last login > 3 years ago THEN initiate archival process with data backup ELSE maintain active status
+Effects/Outcome | Ensures data compliance and system performance optimization.
+Referenced By | UC: SA-UC-006, SA-UC-009
+TBD / Policy Hook | Data retention policy as per institute regulations.
+
+Table 6:
+ID | BR-SA-007
+Name | Separation of Duties
+Type | Constraint
+Canonical Statement | Conflicting roles (e.g., Requester and Approver) MUST NOT be assigned to the same user.
+Inputs & Terms | - RoleAssignment: [System]
+- ConflictMatrix: [Policy file]
+Logic (pick one) | IF NewRole ∈ ConflictMatrix(CurrentRoles) THEN reject assignment.
+Effects/Outcome | Maintains integrity of workflows and approvals.
+Referenced By | UC: SA-UC-002, SA-UC-003
+TBD / Policy Hook | Institute defines role conflicts.
+
+Table 7:
+ID | BR-SA-009
+Name | Emergency Access Procedures
+Type | Authorization | Trigger
+Canonical Statement | Emergency Super Admin access can be granted temporarily during system failures with proper authorization.
+Inputs & Terms | - Emergency Situation: System failure/security breach
+- Emergency Approver: Director/CTO
+- Temporary Access Duration: Maximum 24 hours
+- Emergency Justification: Required documentation
+Logic (pick one) | IF emergency declared AND proper approver available THEN grant temporary access with enhanced logging ELSE follow standard approval process
+Effects/Outcome | Ensures system availability during emergencies while maintaining security.
+Referenced By | UC: SA-UC-010
+TBD / Policy Hook | Emergency procedures defined by crisis management team.
+
+Table 8:
+ID | BR-SA-010
+Name | Notification Requirements
+Type | Trigger
+Canonical Statement | System must notify relevant stakeholders upon completion of Super Admin operations.
+Inputs & Terms | - Notification Recipients: User, HOD, Director, IT Admin
+- Notification Methods: Email, SMS, Dashboard alert
+- Operation Type: User creation/Role assignment/Archival
+- Delivery Confirmation: Required for critical notifications
+Logic (pick one) | ALWAYS send notifications to relevant parties WITH delivery confirmation for critical operations
+Effects/Outcome | Ensures transparency and keeps stakeholders informed.
+Referenced By | UC: SA-UC-001 through SA-UC-009
+TBD / Policy Hook | Communication policy defines notification preferences.
+
+Table 9:
+ID | BR-SA-011
+Name | Validate Unique User
+Type | Constraint
+Canonical Statement | A new user account MUST have a unique email and/or user ID within the system.
+Inputs & Terms | - NewUserEmail: The proposed email for the new user
+- NewUserID: The proposed ID for the new user
+- ExistingUsersDB: The database of all current user records
+Logic (pick one) | IF NewUserEmail OR NewUserID exists in ExistingUsersDB THEN reject creation ELSE allow creation.
+Effects/Outcome | Guarantees that each user has a unique identifier, preventing data conflicts and ensuring proper record-keeping.
+Referenced By | UC: SA-UC-004
+TBD / Policy Hook | -
